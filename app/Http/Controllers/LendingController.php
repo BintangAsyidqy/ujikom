@@ -48,6 +48,8 @@ class LendingController extends Controller
             'ket'      => $request->ket,
             'date'     => $request->date,
             'returned' => false,
+            'edit_by'  => Auth::user()->name,
+            'back_by'  => null,
         ]);
 
         return redirect()->route('operator.lending')->with('success', 'Success add new lending item!');
@@ -59,7 +61,7 @@ class LendingController extends Controller
             Item::find($li['item_id'])->increment('total', $li['total']);
         }
 
-        $lending->update(['returned' => true]);
+        $lending->update(['returned' => true, 'back_by' => Auth::user()->name]);
 
         return redirect()->route('operator.lending')->with('success', 'Item is returned!');
     }
@@ -83,7 +85,7 @@ class LendingController extends Controller
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray(['Item', 'Total', 'Name', 'Ket.', 'Date', 'Return Date', 'Edited By'], null, 'A1');
+        $sheet->fromArray(['Item', 'Total', 'Name', 'Ket.', 'Date', 'Return Date', 'Edit By', 'Back By'], null, 'A1');
 
         $row = 2;
         foreach ($lendings as $lending) {
@@ -99,7 +101,8 @@ class LendingController extends Controller
                     $lending->ket,
                     \Carbon\Carbon::parse($lending->date)->format('M d, Y'),
                     $returnDate,
-                    $lending->user->name,
+                    $lending->edit_by,
+                    $lending->back_by ?? '-',
                 ], null, 'A' . $row++);
             }
         }

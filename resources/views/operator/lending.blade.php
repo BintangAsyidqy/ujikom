@@ -56,7 +56,8 @@
                                     <th class="px-4 py-3">Ket.</th>
                                     <th class="px-4 py-3">Date</th>
                                     <th class="px-4 py-3">Returned</th>
-                                    <th class="px-4 py-3">Edited By</th>
+                                    <th class="px-4 py-3">Edit By</th>
+                                    <th class="px-4 py-3">Back By</th>
                                     <th class="px-4 py-3">Action</th>
                                 </tr>
                             </thead>
@@ -86,7 +87,8 @@
                                                 <span class="px-3 py-1 text-xs text-amber-600">not returned</span>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-4 font-semibold text-slate-900">{{ $lending->user->name }}</td>
+                                        <td class="px-4 py-4 font-semibold text-slate-900">{{ $lending->edit_by }}</td>
+                                        <td class="px-4 py-4 text-slate-600">{{ $lending->back_by ?? '-' }}</td>
                                         <td class="px-4 py-4 flex gap-2">
                                             @if(!$lending->returned)
                                                 <form method="POST" action="{{ route('operator.lending.returned', $lending) }}">
@@ -102,7 +104,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="px-4 py-8 text-center text-slate-500">Belum ada data lending.
+                                        <td colspan="10" class="px-4 py-8 text-center text-slate-500">Belum ada data lending.
                                         </td>
                                     </tr>
                                 @endforelse

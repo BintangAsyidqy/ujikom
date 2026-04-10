@@ -9,7 +9,7 @@ class Lending extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name', 'items', 'ket', 'date', 'returned'];
+    protected $fillable = ['user_id', 'name', 'items', 'ket', 'date', 'returned', 'edit_by', 'back_by'];
 
     protected $casts = ['items' => 'array'];
 
