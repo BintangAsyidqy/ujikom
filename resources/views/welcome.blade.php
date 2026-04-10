@@ -105,7 +105,6 @@
         </section>
 
         <input type="checkbox" id="loginModalToggle" class="hidden peer" />
-        <div class="fixed inset-0 z-50 hidden peer-checked:flex items-center justify-center bg-slate-900/50 px-4 py-8">
         <div class="modal-overlay">
             <div class="w-full max-w-md rounded-3xl bg-white shadow-2xl ring-1 ring-slate-200">
                 <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
@@ -160,7 +159,7 @@
             </div>
         </div>
 
-    </div>
+    </div><!-- end max-w-6xl -->
 
     <footer class="mt-16 border-t border-slate-200 bg-white">
         <div class="w-full max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">

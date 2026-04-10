@@ -52,9 +52,10 @@
                                         <td class="px-4 py-4 text-slate-600">{{ $loop->iteration }}</td>
                                         <td class="px-4 py-4 text-slate-900">{{ $category->name }}</td>
                                         <td class="px-4 py-4 text-slate-600">{{ $category->division }}</td>
-                                        <td class="px-4 py-4 text-slate-600">0</td>
-                                        <td class="px-4 py-4">
+                                        <td class="px-4 py-4 text-slate-600">{{ $category->items_count }}</td>
+                                        <td class="px-4 py-4 flex gap-2">
                                             <button type="button" class="editCategoryBtn rounded-2xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 transition" data-id="{{ $category->id }}">Edit</button>
+                                            <button type="button" class="deleteCategoryBtn rounded-2xl bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 transition" data-url="{{ route('admin.categories.destroy', $category) }}">Delete</button>
                                         </td>
                                     </tr>
                                 @empty
@@ -86,7 +87,7 @@
 
                 <div class="mb-6">
                     <label class="mb-2 block text-sm font-medium text-slate-700">Name</label>
-                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Alat Dapur" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white" />
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Alat" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white" />
                     @error('name')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -117,67 +118,6 @@
         </div>
     </div>
 
-    <script>
-        const openBtn = document.getElementById('openAddCategoryBtn');
-        const closeBtn = document.getElementById('closeAddCategoryBtn');
-        const cancelBtn = document.getElementById('cancelAddCategoryBtn');
-        const modal = document.getElementById('addCategoryModal');
-
-        openBtn.addEventListener('click', function() {
-            modal.classList.remove('hidden');
-        });
-
-        closeBtn.addEventListener('click', function() {
-            modal.classList.add('hidden');
-        });
-
-        cancelBtn.addEventListener('click', function() {
-            modal.classList.add('hidden');
-        });
-
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.classList.add('hidden');
-            }
-        });
-
-        // Edit Category
-        const editButtons = document.querySelectorAll('.editCategoryBtn');
-        const editModal = document.getElementById('editCategoryModal');
-        const editCloseBtn = document.getElementById('closeEditCategoryBtn');
-        const editCancelBtn = document.getElementById('cancelEditCategoryBtn');
-        const editForm = document.getElementById('editCategoryForm');
-
-        editButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const categoryId = this.getAttribute('data-id');
-                fetch(`/admin/categories/${categoryId}/edit`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('editCategoryNameInput').value = data.name;
-                        document.getElementById('editCategoryDivisionSelect').value = data.division;
-                        editForm.action = `/admin/categories/${categoryId}`;
-                        editModal.classList.remove('hidden');
-                    })
-                    .catch(error => console.error('Error:', error));
-            });
-        });
-
-        editCloseBtn.addEventListener('click', function() {
-            editModal.classList.add('hidden');
-        });
-
-        editCancelBtn.addEventListener('click', function() {
-            editModal.classList.add('hidden');
-        });
-
-        editModal.addEventListener('click', function(event) {
-            if (event.target === editModal) {
-                editModal.classList.add('hidden');
-            }
-        });
-    </script>
-
     <!-- Edit Category Modal -->
     <div id="editCategoryModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
@@ -195,7 +135,7 @@
 
                 <div class="mb-6">
                     <label class="mb-2 block text-sm font-medium text-slate-700">Name</label>
-                    <input type="text" id="editCategoryNameInput" name="name" placeholder="Alat Dapur" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white" />
+                    <input type="text" id="editCategoryNameInput" name="name" placeholder="Alat" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white" />
                 </div>
 
                 <div class="mb-6">
@@ -219,5 +159,66 @@
             </form>
         </div>
     </div>
+
+    <!-- Delete Category Modal -->
+    <div id="deleteCategoryModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6">
+            <h2 class="text-xl font-bold text-slate-900 mb-2">Hapus Kategori</h2>
+            <p class="text-slate-600 mb-6">Kategori ini akan dihapus permanen.</p>
+            <div class="flex gap-3 justify-end">
+                <button id="cancelDeleteCategoryBtn" class="rounded-2xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Cancel</button>
+                <form id="deleteCategoryForm" method="POST">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="rounded-2xl bg-red-500 px-6 py-3 text-sm font-semibold text-white hover:bg-red-600 transition">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function modal(id) {
+            const el = document.getElementById(id);
+            const open  = () => el.classList.remove('hidden');
+            const close = () => el.classList.add('hidden');
+            el.addEventListener('click', e => { if (e.target === el) close(); });
+            return { open, close, el };
+        }
+
+        const addModal    = modal('addCategoryModal');
+        const editModal   = modal('editCategoryModal');
+        const deleteModal = modal('deleteCategoryModal');
+        const editForm    = document.getElementById('editCategoryForm');
+
+        document.getElementById('openAddCategoryBtn').addEventListener('click', addModal.open);
+        document.getElementById('closeAddCategoryBtn').addEventListener('click', addModal.close);
+        document.getElementById('cancelAddCategoryBtn').addEventListener('click', addModal.close);
+
+        @if($errors->hasAny(['name', 'division'])) addModal.open(); @endif
+
+        document.getElementById('closeEditCategoryBtn').addEventListener('click', editModal.close);
+        document.getElementById('cancelEditCategoryBtn').addEventListener('click', editModal.close);
+        document.getElementById('cancelDeleteCategoryBtn').addEventListener('click', deleteModal.close);
+
+        document.querySelectorAll('.editCategoryBtn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                fetch(`/admin/categories/${this.dataset.id}/edit`)
+                    .then(r => r.json())
+                    .then(data => {
+                        document.getElementById('editCategoryNameInput').value = data.name;
+                        document.getElementById('editCategoryDivisionSelect').value = data.division;
+                        editForm.action = `/admin/categories/${this.dataset.id}`;
+                        editModal.open();
+                    });
+            });
+        });
+
+        document.querySelectorAll('.deleteCategoryBtn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.getElementById('deleteCategoryForm').action = this.dataset.url;
+                deleteModal.open();
+            });
+        });
+    </script>
+
 </body>
 </html>

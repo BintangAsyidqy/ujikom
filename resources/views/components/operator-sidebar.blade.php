@@ -14,15 +14,47 @@
                 Dashboard
             </a>
 
-            <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">
+            <a href="{{ route('operator.lending') }}" class="flex items-center px-4 py-3 text-sm font-medium {{ request()->routeIs('operator.lending') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50' }} rounded-lg transition">
+                <i class="fas fa-hand-holding-usd w-5 h-5 mr-3 text-center"></i>
+                Lending
+            </a>
+            
+            <a href="{{ route('operator.items') }}" class="flex items-center px-4 py-3 text-sm font-medium {{ request()->routeIs('operator.items') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50' }} rounded-lg transition">
                 <i class="fas fa-box w-5 h-5 mr-3 text-center"></i>
                 Items
             </a>
 
-            <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">
-                <i class="fas fa-hand-holding-usd w-5 h-5 mr-3 text-center"></i>
-                Lendings
-            </a>
+            <div class="relative">
+                <button type="button" id="usersDropdownBtn" class="flex items-center w-full px-4 py-3 text-sm font-medium {{ request()->routeIs('operator.users') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50' }} rounded-lg transition">
+                    <i class="fas fa-users w-5 h-5 mr-3 text-center"></i>
+                    Users
+                    <svg class="w-4 h-4 ml-auto transition-transform duration-200" id="usersArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div id="usersMenu" class="hidden mt-1 bg-white border border-slate-200 rounded-lg shadow-lg">
+                    <a href="{{ route('operator.users') }}" class="block px-4 py-3 text-sm {{ request()->routeIs('operator.users') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:bg-slate-50 hover:text-blue-600' }} rounded-lg transition">
+                        <i class="fas fa-user-edit w-4 h-4 mr-3 inline"></i>
+                        Edit
+                    </a>
+                </div>
+            </div>
+
+            <script>
+                const btn = document.getElementById('usersDropdownBtn');
+                const menu = document.getElementById('usersMenu');
+                const arrow = document.getElementById('usersArrow');
+                @if(request()->routeIs('operator.users'))
+                    menu.classList.remove('hidden');
+                    arrow.style.transform = 'rotate(180deg)';
+                @endif
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                    arrow.style.transform = menu.classList.contains('hidden') ? '' : 'rotate(180deg)';
+                });
+            </script>
         </nav>
 
         <!-- User Info & Logout -->

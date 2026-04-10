@@ -12,17 +12,16 @@
                 <i class="fas fa-tachometer-alt w-5 h-5 mr-3 text-center"></i>
                 Dashboard
             </a>
-
-            <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition">
-                <i class="fas fa-box w-5 h-5 mr-3 text-center"></i>
-                Items
-            </a>
-
+            
             <a href="{{ route('admin.categories') }}" class="flex items-center px-4 py-3 text-sm font-medium {{ request()->routeIs('admin.categories') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50' }} rounded-lg transition">
                 <i class="fas fa-tags w-5 h-5 mr-3 text-center"></i>
                 Categories
             </a>
-
+            
+            <a href="{{ route('admin.items') }}" class="flex items-center px-4 py-3 text-sm font-medium {{ request()->routeIs('admin.items') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50' }} rounded-lg transition">
+                <i class="fas fa-box w-5 h-5 mr-3 text-center"></i>
+                Items
+            </a>
             <!-- Users Dropdown -->
             <div class="relative">
                 <input type="checkbox" id="usersDropdown" class="hidden" />
@@ -36,11 +35,11 @@
 
                 <!-- Dropdown Menu -->
                 <div id="usersMenu" class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-10">
-                    <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 first:rounded-t-lg transition">
+                    <a href="{{ route('admin.users.admin') }}" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 first:rounded-t-lg transition">
                         <i class="fas fa-shield-alt w-4 h-4 mr-3 inline"></i>
                         Admin
                     </a>
-                    <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 last:rounded-b-lg transition">
+                    <a href="{{ route('admin.users.operator') }}" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 last:rounded-b-lg transition">
                         <i class="fas fa-user-cog w-4 h-4 mr-3 inline"></i>
                         Operator
                     </a>

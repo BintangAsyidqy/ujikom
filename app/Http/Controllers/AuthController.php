@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ItemsExport;
 use App\Models\Category;
+use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AuthController extends Controller
 {
@@ -89,6 +92,57 @@ class AuthController extends Controller
         return redirect()->route('admin.categories')->with('success', 'Kategori berhasil diperbarui.');
     }
 
+    public function adminItems()
+    {
+        $items = Item::with('category')->get();
+        $categories = Category::all();
+        return view('admin.items', compact('items', 'categories'));
+    }
+
+    public function storeItem(Request $request)
+    {
+        $data = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'name'        => ['required', 'string', 'max:255'],
+            'total'       => ['required', 'integer', 'min:0'],
+            'repair'      => ['required', 'integer', 'min:0'],
+        ]);
+
+        Item::create($data);
+
+        return redirect()->route('admin.items')->with('success', 'Item berhasil ditambahkan.');
+    }
+
+    public function editItem($id)
+    {
+        return response()->json(Item::findOrFail($id));
+    }
+
+    public function updateItem(Request $request, $id)
+    {
+        $data = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'name'        => ['required', 'string', 'max:255'],
+            'total'       => ['required', 'integer', 'min:0'],
+            'new_repair'  => ['required', 'integer', 'min:0'],
+        ]);
+
+        $item = Item::findOrFail($id);
+        $item->update([
+            'category_id' => $data['category_id'],
+            'name'        => $data['name'],
+            'total'       => $data['total'],
+            'repair'      => $item->repair + $data['new_repair'],
+        ]);
+
+        return redirect()->route('admin.items')->with('success', 'Item berhasil diperbarui.');
+    }
+
+    public function exportItems()
+    {
+        return Excel::download(new ItemsExport, 'items_' . now()->format('Ymd_His') . '.xlsx');
+    }
+
     public function dashboard()
     {
         $totalItems = 0; // Placeholder, ganti dengan model items jika ada
@@ -110,3 +164,4 @@ class AuthController extends Controller
         return redirect('/');
     }
 }
+
